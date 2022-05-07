@@ -120,8 +120,12 @@ public class KarteTools
     }
 
 
-
-
+    /**
+     * Überpruft ob die Karten auf der gleichen vertikalen Linie (Spalte) angeordnet sind.
+     * @param karte1
+     * @param karte2
+     * @return true die Bedingung erfüllt ist.
+     */
     private static boolean isCardOnTheNordOrSouth(KarteModel karte1, KarteModel karte2)
     {
         if(karte1.getX() != karte2.getX())
@@ -131,6 +135,12 @@ public class KarteTools
         return true;
     }
 
+    /**
+     * Überpruft ob die Karten auf der gleichen horizontal Linie (Linie) angeordnet sind.
+     * @param karte1
+     * @param karte2
+     * @return true die Bedingung erfüllt ist.
+     */
     private static boolean isCardWestOrEast(KarteModel karte1, KarteModel karte2)
     {
         if(  karte1.getY() != karte2.getY())
