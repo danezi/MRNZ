@@ -21,6 +21,10 @@ public class Minions extends KarteModel
 
   {
     super( name, lebenspunkte, angriffswert, verteidigungspunkte,verteidigungspunkte);
+    this.name = name;
+    this.manaWert = manaWert;
+    this.angriffswert = angriffswert;
+    this.verteidigungspunkte =verteidigungspunkte;
     this.typ=typ;
   }
 

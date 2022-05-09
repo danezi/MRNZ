@@ -7,11 +7,9 @@ public class main
     public static void main(String[] args)
     {
 
-        KarteModel minions1 = new KarteModel("ziii",1,4,3,1);
-        KarteModel minions2 = new KarteModel("ziii",1,4,4,2);
-        Minions.attackeffekt(minions1,minions2); //4-1
-
-
+        Minions minions3 = new Minions("minions",1,4,3,3,PlayerType.PLAYER);
+        Minions minions4 = new Minions("minions",1,4,6,2,PlayerType.DUNGEON);
+        Minions.attackeffekt(minions3,minions4);
 /*
         KarteModel player = new KarteModel("ziii",5,4);
        System.out.println( "rrrr" +player.getX() );
