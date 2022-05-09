@@ -3,34 +3,54 @@ package SpielKarte;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Kontrolle, ob die Karten nicht vom selben Typ sind.
+ *
+ * Die Karten, die den Angreifer und den Angreifer trennen,
+ * müssen eingesammelt werden (dies gilt für Karten, die die Möglichkeit haben,
+ * alle Karten (des Gegners) in derselben (Reihe oder Spalte) anzugreifen).
+ */
 public class KarteTools
 {
-    public static void isattack(KarteModel attacke, KarteModel attackeur, List<KarteModel> karteAufMap)
+    /**
+     *
+     * @param attacked
+     *             der angriffene Spieler.
+     * @param attacker
+     *             der angreifende Spieler.
+     * @param karteAufMap
+     *             alle Karten auf der Map.
+     */
+    public static void isattack(KarteModel attacked, KarteModel attacker, List<KarteModel> karteAufMap) // Minions statt KarteModel...?
     {
-        int controller = attacke.getY()- attackeur.getY();
-        int controllerX = attacke.getX()- attackeur.getX();
+        int controller = attacked.getY()- attacker.getY();
+        int controllerX = attacked.getX()- attacker.getX();
         List<KarteModel> enemieKarteOnSameY = new ArrayList<>();
         List<KarteModel> enemieKarteOnSameX = new ArrayList<>();
 
 
-            if(!attacke.getPlayerType().toString().equals(attackeur.getPlayerType().toString())) /* Kontrolle, ob die
+            if(!attacked.getPlayerType().toString().equals(attacker.getPlayerType().toString())) /* Kontrolle, ob die
              Karten nicht vom selben Typ sind*/
             {
-                if(isCardOnTheNordOrSouth(attacke, attackeur))
+                if(isCardOnTheNordOrSouth(attacked, attacker))
                 {
                     if(controller==1)
                     {
-                        //logic attack
+                        //logic attacks
+                        KarteModel.attackeffekt(attacked,attacker);
                     }else
                     {
-                        cardSelectionByCardOnSameY(controller, karteAufMap, enemieKarteOnSameY, attackeur, attacke); //card on Y
+                        cardSelectionByCardOnSameY(controller, karteAufMap, enemieKarteOnSameY, attacker, attacked); //card on Y
                     }
 
-                }else if(isCardWestOrEast(attacke, attackeur)) {
-                    if (controllerX == 1) {
+                }else if(isCardWestOrEast(attacked, attacker)) {
+                    if (controllerX == 1)
+                    {
+
                         //logic attack
+                        KarteModel.attackeffekt(attacked,attacker);
                     } else
-                        cardSelectionByCardOnSameX(controllerX, karteAufMap, enemieKarteOnSameX, attackeur, attacke);
+                        cardSelectionByCardOnSameX(controllerX, karteAufMap, enemieKarteOnSameX, attacker, attacked);
                 }
                 }
             }
@@ -38,41 +58,44 @@ public class KarteTools
 
     /**
      * Diese Methode nimmt alle Karten, die zwischen der angreifenden
-     * und der angegriffenen Karte liegen, falls es/sie  gibt, und setzt sie in die List karteAufMap.
+     * und der angegriffenen Karte liegen(auf Ordinatenachse oder auf die Spalte),
+     * falls es/sie  gibt, und setzt sie in die List karteAufMap.
      * @param controller
+     *                  ist die Differenz zwischen den Koordinaten auf der Y-Achse  des Angreifers und des Angreifers.
      * @param karteAufMap
      *                 Liste, in der er unsere Karte hätte.
      * @param karteOnSameY
      *                 alle Karten, die auf der gleichen Achse der Ordinaten(oder auf der Vertikalen unserer Karte) liegen.
-     * @param attackeur
+     * @param attacker
      *               die angreifende Karte.
-     * @param attacke
+     * @param attacked
      *           die Karte, die angegriffen wird.
      */
     private static void cardSelectionByCardOnSameY(int controller, List<KarteModel> karteAufMap, List<KarteModel>
-            karteOnSameY, KarteModel attackeur, KarteModel attacke)
+            karteOnSameY, KarteModel attacker, KarteModel attacked)
     {
         if(controller >0)
         {
             for(KarteModel karte : karteAufMap) //karte is a card on the field.
             {
-                if(isCardOnTheNordOrSouth(attackeur, karte)) {
-                    if (karte.getY() > attackeur.getY() && karte.getY() < attacke.getY()) {
-                        if (karte.getPlayerType() != attackeur.getPlayerType()) {
+                if(isCardOnTheNordOrSouth(attacker, karte)) {
+                    if (karte.getY() > attacker.getY() && karte.getY() < attacked.getY()) {
+                        if (karte.getPlayerType() != attacker.getPlayerType()) {
                             karteOnSameY.add(karte);
                         }
                     }
                 }
 
             }
+
             // ecrire la logique pour ce qui se passe
             //logic to attack oll karte in enemieKarteOnSameX.
         } else  {
             for(KarteModel karte : karteAufMap) //karte is a card on the field.
             {
-                if(isCardOnTheNordOrSouth(attackeur, karte)) {
-                    if (karte.getY() < attackeur.getY() && karte.getY() > attacke.getY()) {
-                        if (karte.getPlayerType() != attackeur.getPlayerType()) {
+                if(isCardOnTheNordOrSouth(attacker, karte)) {
+                    if (karte.getY() < attacker.getY() && karte.getY() > attacked.getY()) {
+                        if (karte.getPlayerType() != attacker.getPlayerType()) {
                             karteOnSameY.add(karte);
                         }
                     }
@@ -83,17 +106,31 @@ public class KarteTools
 
         }
     }
-
+    /**
+     * Diese Methode nimmt alle Karten, die zwischen der angreifenden
+     * und der angegriffenen Karte liegen(auf der Linie oder auf die Achse der Abszisse), falls es/sie  gibt, und setzt sie in die List karteAufMap.
+     * @param controller
+     *                 ist die Differenz zwischen den Koordinaten auf der X-Achse  des Angreifers und des Angreifers.
+     * @param karteAufMap
+     *                 Liste, in der er unsere Karte hätte.
+     * @param karteOnSameX
+     *                 ist die Differenz zwischen den Koordinaten auf der y-Achse  des Angreifers und des Angreifers.
+     * @param attacker
+     *               die angreifende Karte.
+     * @param attacked
+     *           die Karte, die angegriffen wird.
+     */
     private static void cardSelectionByCardOnSameX(int controller, List<KarteModel> karteAufMap, List<KarteModel>
-            karteOnSameX, KarteModel attackeur, KarteModel attacke)
+            karteOnSameX, KarteModel attacker, KarteModel attacked)
     {
+
         if(controller >0)
         {
             for(KarteModel karte : karteAufMap) //karte is a card on the field.
             {
-                if(isCardWestOrEast(attackeur, karte)) {
-                    if (karte.getX() > attackeur.getX() && karte.getX() < attacke.getX()) {
-                        if (karte.getPlayerType() != attackeur.getPlayerType()) {
+                if(isCardWestOrEast(attacker, karte)) {
+                    if (karte.getX() > attacker.getX() && karte.getX() < attacked.getX()) {
+                        if (karte.getPlayerType() != attacker.getPlayerType()) {
                             karteOnSameX.add(karte);
                         }
                     }
@@ -106,9 +143,9 @@ public class KarteTools
         } else  {
             for(KarteModel karte : karteAufMap) //karte is a card on the field.
             {
-                if(isCardWestOrEast(attackeur, karte)) {
-                    if (karte.getX() < attackeur.getX() && karte.getX() > attacke.getX()) {
-                        if (karte.getPlayerType() != attackeur.getPlayerType()) {
+                if(isCardWestOrEast(attacker, karte)) {
+                    if (karte.getX() < attacker.getX() && karte.getX() > attacked.getX()) {
+                        if (karte.getPlayerType() != attacker.getPlayerType()) {
                             karteOnSameX.add(karte);
                         }
                     }
